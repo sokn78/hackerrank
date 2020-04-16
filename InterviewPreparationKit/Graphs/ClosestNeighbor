@@ -1,0 +1,51 @@
+graph_nodes = 5
+
+graph_from = [1, 1, 2, 3]
+graph_to = [2, 3, 4, 5]
+ids = [1, 2, 3, 3, 2]
+val = 2
+
+node_id = 2
+
+def findShortest(graph_nodes, graph_from, graph_to, ids, val):
+    # solve here
+    all_links = [(dep, arr) for dep, arr in zip(graph_from, graph_to)] + [(arr, dep) for dep, arr in
+                                                                          zip(graph_from, graph_to)]
+
+    neighbors = dict()
+
+    for dep, arr in all_links:
+        neighbors.setdefault(dep, set()).add(arr)
+
+    possible_departures = [node_id for node_id in range(1, graph_nodes + 1) if ids[node_id - 1] == val]
+
+    def evaluate_one_node(node_id, val):
+        already_visited = set()
+
+        def get_shortest_path_length(already_visited, node_id, val):
+            neighbors_ids = neighbors[node_id]
+            if sum([neighbors_id not in already_visited for neighbors_id in neighbors_ids]) == 0:
+                return float("inf")
+            if any([ids[node_id - 1] == val for node_id in neighbors_ids if node_id not in already_visited]):
+                return 1
+            else:
+                already_visited.add(node_id)
+                return 1 + min(
+                    [get_shortest_path_length(already_visited, neighbor_id, val) for neighbor_id in neighbors_ids if
+                     neighbor_id not in already_visited])
+
+        return get_shortest_path_length(already_visited, node_id, val)
+
+    if len(possible_departures) > 0:
+        res = min([evaluate_one_node(dep, val) for dep in possible_departures])
+
+    else:
+        res = -1
+
+    if res == float("inf"):
+        return -1
+    else:
+        return res
+
+
+findShortest(graph_nodes, graph_from, graph_to, ids, val)
