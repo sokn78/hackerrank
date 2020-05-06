@@ -1,0 +1,26 @@
+import math
+import os
+import random
+import re
+import sys
+
+def nonDivisibleSubset(k, s):
+    all_modulos = [a % k for a in s]
+
+    counter = dict()
+
+    for one_mod in all_modulos:
+        counter[one_mod] = counter.get(one_mod, 0) + 1
+
+    mod_counts = [counter.get(i, 0) for i in range(0, k)]
+
+    set_size = 0
+
+    set_size = sum([max(mod_counts[i], mod_counts[k - i]) for i in range(1, 1 + math.floor(k / 2)) if i != k / 2])
+
+    set_size = set_size + min(1, mod_counts[0])
+
+    if k % 2 == 0:
+        set_size = set_size + min(1, mod_counts[k // 2])
+
+    return set_size
